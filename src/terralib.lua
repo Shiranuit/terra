@@ -441,7 +441,7 @@ function debug.traceback(thrad,msg,level)
     if type(thread) ~= "thread" then
         level = msg
         msg = thread
-        thread = nil
+        thread = coroutine.running()
     end
     level = level or 1
     level = level + 1 -- don't count ourselves
