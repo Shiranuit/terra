@@ -142,10 +142,17 @@ int terra_lualoadfile(lua_State *L) {
 
 int terra_lualoadstring(lua_State *L) {
     const char *string = luaL_checkstring(L, -1);
-    if (terra_loadstring(L, string)) {
+    const char *chunkname = nullptr;
+    if (lua_gettop(L) > 1) {
+        chunkname = luaL_checkstring(L, -2);
+    }
+    if (terra_loadstring(L, string, chunkname)) {
         lua_pushnil(L);
         lua_pushvalue(L, -2);
         lua_remove(L, -3);
+        if (chunkname != nullptr) {
+            lua_remove(L, -4);
+        }
         return 2;
     }
     return 1;
@@ -590,8 +597,8 @@ int terra_loadbuffer(lua_State *L, const char *buf, size_t size, const char *nam
     return terra_load(L, reader_string, &ctx, name);
 }
 
-int terra_loadstring(lua_State *L, const char *s) {
-    return terra_loadbuffer(L, s, strlen(s), "<string>");
+int terra_loadstring(lua_State *L, const char *s, const char *name) {
+    return terra_loadbuffer(L, s, strlen(s), name == nullptr ? "<string>" : name);
 }
 
 namespace llvm {

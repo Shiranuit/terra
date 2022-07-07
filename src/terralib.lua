@@ -437,7 +437,7 @@ end
 terra.fulltrace = false
 terra.slimtrace = false
 -- override the lua traceback function to be aware of Terra compilation contexts
-function debug.traceback(thrad,msg,level)
+function debug.traceback(thread,msg,level)
     if type(thread) ~= "thread" then
         level = msg
         msg = thread
