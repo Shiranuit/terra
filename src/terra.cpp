@@ -141,18 +141,20 @@ int terra_lualoadfile(lua_State *L) {
 }
 
 int terra_lualoadstring(lua_State *L) {
-    const char *string = luaL_checkstring(L, -1);
+    const char *string = nullptr;
     const char *chunkname = nullptr;
     if (lua_gettop(L) > 1) {
-        chunkname = luaL_checkstring(L, -2);
+        string = luaL_checkstring(L, -2);
+        chunkname = luaL_checkstring(L, -1);
+    } else {
+        string = luaL_checkstring(L, -1);
     }
+
     if (terra_loadstring(L, string, chunkname)) {
         lua_pushnil(L);
         lua_pushvalue(L, -2);
+        lua_remove(L, -4);
         lua_remove(L, -3);
-        if (chunkname != nullptr) {
-            lua_remove(L, -4);
-        }
         return 2;
     }
     return 1;
